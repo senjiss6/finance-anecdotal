@@ -1,13 +1,19 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
 import { Button, Input, Table } from 'antd';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { render } from '@testing-library/react';
+import dayjs from 'dayjs';
+import { useAuth } from '../context/auth';
+import { database } from '../config/firebase.config';
+import {ref, serverTimestamp, set} from "firebase/database";
 
 const Tab1: React.FC = () => {
+  const {realtimeEvent, id} = useAuth();
+  const [inputName, setinputName] = useState("");
+  const [inputValue, setinputValue] = useState(0);
   const [loadingTable, setloadingTable] = useState(false);
+  const [disableButton, setdisableButton] = useState(false);
 
   interface Report {
     report_name: string,
@@ -43,7 +49,8 @@ const Tab1: React.FC = () => {
     {
       title: 'Date',
       dataIndex: 'created_date',
-      key: 'created_date'
+      key: 'created_date',
+      render: (data: string) => (formatDate(data))
     }
   ]
 
@@ -66,6 +73,34 @@ const Tab1: React.FC = () => {
     }
   ];
 
+  const formatDate = (date: string) => {
+    const format = dayjs(date).format("DD MMMM YYYY");
+    return format;
+  }
+
+  const handleInput = async (type: number, name: string) => {
+    try{
+      setdisableButton(true);
+      set(ref(database, `users/${id}`), {
+        report_name: inputName,
+        type_id: type,
+        type_name: name,
+        report_value: inputValue,
+        created_date: serverTimestamp()
+      });
+
+      setinputName("");
+      setinputValue(0);
+    }
+    catch(error){
+
+    }
+    finally{
+      setdisableButton(false);
+    }
+    
+  }
+
   return (
     <IonPage>
       <IonHeader>
@@ -77,11 +112,11 @@ const Tab1: React.FC = () => {
         <h5>Welcome, eson</h5>
         <h5>Current State Rp. 5000</h5>
         <div>
-          <Input placeholder='income name'></Input> 
-          <Input placeholder='income value'></Input> 
+          <IonInput value={inputName} onIonInput={(e) => setinputName(e.detail.value!)} placeholder='income name'></IonInput> 
+          <IonInput value={inputValue} type='number' onIonInput={(e) => setinputValue(parseInt(e.detail.value!))} placeholder='income value'></IonInput> 
           <div style={{display: "flex", alignItems:"center", marginTop: "20px"}}>
-            <Button style={{ width: '50%', marginRight: "10px" }}>Income</Button>
-            <Button style={{ width: '50%' }}>Outcome</Button>
+            <Button disabled={disableButton} onClick={() => handleInput(1, "income")} style={{ width: '50%', marginRight: "10px" }}>Income</Button>
+            <Button disabled={disableButton} onClick={() => handleInput(2, "outcome")} style={{ width: '50%' }}>Outcome</Button>
           </div>
           <div>
             <h5 style={{marginLeft: "30%"}}>This month report</h5>

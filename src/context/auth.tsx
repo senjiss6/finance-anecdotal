@@ -1,4 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { database } from '../config/firebase.config';
+import { ref, off, onValue } from "firebase/database";
+import { useHistory } from "react-router";
 
 interface UserDetail {
     user_id: Number,
@@ -13,7 +16,9 @@ interface AuthContextType {
   login: (accessToken:string, data:UserDetail) => void;
   logout: () => void;
   user: UserDetail,
-  token: string
+  token: string,
+  realtimeEvent: string
+  id: number
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const history = useHistory();
     const [token, setToken] = useState("");
     const [dataUser, setdataUser] = useState<UserDetail>({
         user_id: 0,
@@ -29,6 +35,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         created_date: "string",
         updated_date: "string"
     });
+    const [realtimeEvent, setrealtimeEvent] = useState("");
+    const id=1;
+    const [userRef, setuserRef] = useState<any>(null);
 
     useEffect(() => {
         const savedToken = localStorage.getItem("access_token");
@@ -52,12 +61,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
+    off(userRef);
+    history.replace('/');
     setToken("");
   }
+
+  useEffect(() => {
+    if (!id) return;
+
+    let refUser:any;
+    if (!userRef) {
+      refUser = ref(database, `users/${id}`)
+      setuserRef(refUser);
+    }
+
+    onValue(refUser, (snap) => {
+      if (snap.val()){
+        setrealtimeEvent(snap.val().event);
+      }
+    });
+
+    return () => {
+      off(refUser);
+    };
+  }, [id]);
+
   const isAuthenticated = !!token;
   const user = dataUser;
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, user, token }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, user, token, realtimeEvent, id }}>
       {children}
     </AuthContext.Provider>
   );
