@@ -22,7 +22,7 @@
 /.vscode/*
 !/.vscode/extensions.json
 .idea
-env
+.env
 android
 ios
 
