@@ -1,0 +1,25 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 60%;
+  }
+  
+  .login-box {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+  }
+  
+  .input-field {
+    margin-bottom: 15px;
+  }
+  

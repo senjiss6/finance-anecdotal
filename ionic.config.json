@@ -1,0 +1,7 @@
+{
+  "name": "finance-anecdotal",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
