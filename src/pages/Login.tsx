@@ -1,96 +1,72 @@
-import React, { useState } from "react";
+import React from 'react';
 import {
-  IonApp,
-  IonContent,
-  IonInput,
-  IonButton,
   IonPage,
   IonHeader,
   IonToolbar,
   IonTitle,
-} from "@ionic/react";
-import "./Login.css";
-import { useAuth } from "../context/auth";
-import { useHistory } from "react-router";
-import axios from "axios";
+  IonContent,
+  IonButton,
+  IonCard,
+  IonCardContent,
+  IonSpinner,
+} from '@ionic/react';
+import { logoGoogle } from 'ionicons/icons';
+import { IonIcon } from '@ionic/react';
+import { useAuth } from '../context/auth';
+import './Login.css';
 
 const Login: React.FC = () => {
-  const { login } = useAuth();
-  const history = useHistory();
-  const [loading, setloading] = useState(false);
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
-  const [validations, setvalidations] = useState({
-    email: "",
-    password: ""
-  });
+  const { loginWithGoogle, isLoading } = useAuth();
 
-  const handleInputEmail = (event: CustomEvent) => {
-    setemail(event.detail.value!);
-  };
-  const handleInputPassword = (event: CustomEvent) => {
-    setpassword(event.detail.value!);
-  };
-  const loginFunc = async () => {
-    let formData = new FormData();
-    formData.append("user_email", email);
-    formData.append("user_password", password);
-    
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "auth/login/",
-      headers: { "content-type": "application/x-www-form-urlencoded" },
-      data: formData,
-    };
-    const response = await axios.request(config);
-    if (response.status === 200) {
-      const accessToken = response.data.access_token;
-      login(accessToken, response.data.user);
-      setloading(false);
-      axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.data.token.access_token}`;
-      history.push("/home");
-    } else {
-      console.log(response)
-      // setvalidations(response.response.data);
-      setloading(false);
+  const handleGoogleLogin = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      console.error('Login failed:', error);
     }
-  }
+  };
 
   return (
-    <IonApp>
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Login</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen className="ion-padding login-container">
-          <div className="login-wrapper">
-            <div className="login-box">
-              <IonInput 
-                value={email} 
-                onIonChange={handleInputEmail} 
-                placeholder="Email" 
-                type="email" 
-                className="input-field" />
-              {validations.email && <span>{validations.email}</span> }
-              <IonInput
-                placeholder="Password"
-                type="password"
-                className="input-field"
-                value={password}
-                onIonChange={handleInputPassword}
-              />
-              {validations.password && <span>{validations.password}</span> }
-              <IonButton disabled={loading} onClick={() => loginFunc()} expand="full">{loading ? "Loading..." : "Login"}</IonButton>
-            </div>
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Login</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding">
+        <div className="login-container">
+          <div className="login-logo">
+            <IonIcon icon={logoGoogle} className="google-icon" />
           </div>
-        </IonContent>
-      </IonPage>
-    </IonApp>
+          <h1 className="login-title">Finance Tracker</h1>
+          <p className="login-subtitle">Track your income and expenses easily</p>
+
+          <IonCard className="login-card">
+            <IonCardContent>
+              <IonButton
+                expand="block"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+                className="google-login-btn"
+              >
+                {isLoading ? (
+                  <IonSpinner name="crescent" />
+                ) : (
+                  <>
+                    <IonIcon icon={logoGoogle} slot="start" />
+                    Sign in with Google
+                  </>
+                )}
+              </IonButton>
+            </IonCardContent>
+          </IonCard>
+
+          <p className="login-footer">
+            By signing in, you agree to use your Google account for authentication.
+          </p>
+        </div>
+      </IonContent>
+    </IonPage>
   );
 };
 

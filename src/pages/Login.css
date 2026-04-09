@@ -1,25 +1,59 @@
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  .login-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-top: 60%;
-  }
-  
-  .login-box {
-    width: 100%;
-    max-width: 300px;
-    text-align: center;
-  }
-  
-  .input-field {
-    margin-bottom: 15px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.login-logo {
+  margin-bottom: 20px;
+}
+
+.google-icon {
+  font-size: 80px;
+  color: #4285f4;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-align: center;
+  color: #333;
+}
+
+.login-subtitle {
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  margin: 0 0 32px 0;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.google-login-btn {
+  --background: #4285f4;
+  --background-hover: #357ae8;
+  --background-activated: #357ae8;
+  --color: #ffffff;
+  font-weight: 600;
+  height: 50px;
+}
+
+.google-login-btn ion-icon {
+  font-size: 24px;
+}
+
+.login-footer {
+  margin-top: 32px;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  max-width: 300px;
+}
