@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { SocialLogin } from '@capgo/capacitor-social-login';
 import { database } from '../config/firebase.config';
 import { ref, get, set, serverTimestamp } from 'firebase/database';
+import { useHistory } from 'react-router-dom';
 
 export interface User {
   id: string;
@@ -21,10 +22,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const IOS_CLIENT_ID = import.meta.env.VITE_GOOGLE_IOS_CLIENT_ID || '';
+// const IOS_CLIENT_ID = import.meta.env.VITE_GOOGLE_IOS_CLIENT_ID || '';
 const WEB_CLIENT_ID = import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID || '';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const history = useHistory();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -79,7 +81,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Initialize with Google options
       await SocialLogin.initialize({
         google: {
-          iOSClientId: IOS_CLIENT_ID,
+          // iOSClientId: IOS_CLIENT_ID,
           webClientId: WEB_CLIENT_ID,
         },
       });
@@ -119,6 +121,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } finally {
       setUser(null);
       localStorage.removeItem('finance_user');
+      
     }
   };
 

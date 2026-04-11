@@ -5,6 +5,7 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
+import { useEffect } from 'react';
 import Login from './pages/Login';
 import Tab1 from './pages/Tab1';
 
@@ -29,11 +30,20 @@ import './theme/variables.css';
 import { AuthProvider } from './context/auth';
 import { TransactionProvider } from './context/transaction';
 import { useAuth } from './context/auth';
+import { useLocation } from 'react-router-dom';
 
 setupIonicReact();
 
 const AppRoutes: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Redirect to login if not authenticated and not on login page
+    if (!isLoading && !isAuthenticated && location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
+  }, [isAuthenticated, isLoading, location.pathname]);
 
   if (isLoading) {
     return null; // Or a loading spinner

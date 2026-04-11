@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   IonPage,
   IonHeader,
@@ -13,10 +13,18 @@ import {
 import { logoGoogle } from 'ionicons/icons';
 import { IonIcon } from '@ionic/react';
 import { useAuth } from '../context/auth';
+import { useHistory } from 'react-router-dom';
 import './Login.css';
 
 const Login: React.FC = () => {
-  const { loginWithGoogle, isLoading } = useAuth();
+  const { loginWithGoogle, isLoading, isAuthenticated } = useAuth();
+  const history = useHistory();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.replace('/home');
+    }
+  }, [isAuthenticated, history]);
 
   const handleGoogleLogin = async () => {
     try {
