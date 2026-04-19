@@ -3,11 +3,18 @@ import {
   IonApp,
   IonRouterOutlet,
   setupIonicReact,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
+  IonLabel,
+  IonIcon,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { useEffect } from 'react';
 import Login from './pages/Login';
 import Tab1 from './pages/Tab1';
+import Tab2 from './pages/Tab2';
+import { homeOutline, calendarOutline } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -49,12 +56,35 @@ const AppRoutes: React.FC = () => {
     return null; // Or a loading spinner
   }
 
+  if (!isAuthenticated) {
+    return (
+      <IonRouterOutlet>
+        <Route exact path="/login" component={Login} />
+        <Redirect exact from="/" to="/login" />
+      </IonRouterOutlet>
+    );
+  }
+
   return (
-    <IonRouterOutlet>
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/home" component={Tab1} />
-      <Redirect exact from="/" to={isAuthenticated ? '/home' : '/login'} />
-    </IonRouterOutlet>
+    <IonTabs>
+      <IonRouterOutlet>
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/home" component={Tab1} />
+        <Route exact path="/history" component={Tab2} />
+        <Redirect exact from="/" to="/home" />
+        <Redirect exact from="/tabs" to="/home" />
+      </IonRouterOutlet>
+      <IonTabBar slot="bottom">
+        <IonTabButton tab="home" href="/home">
+          <IonIcon icon={homeOutline} />
+          <IonLabel>Home</IonLabel>
+        </IonTabButton>
+        <IonTabButton tab="history" href="/history">
+          <IonIcon icon={calendarOutline} />
+          <IonLabel>History</IonLabel>
+        </IonTabButton>
+      </IonTabBar>
+    </IonTabs>
   );
 };
 

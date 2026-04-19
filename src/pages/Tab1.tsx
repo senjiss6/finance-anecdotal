@@ -107,9 +107,6 @@ const Tab1: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Finance Tracker</IonTitle>
-          <IonButton slot="end" fill="clear" onClick={logout} className="logout-btn-header">
-            <IonIcon icon={logOutOutline} />
-          </IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">

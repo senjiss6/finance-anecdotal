@@ -16,6 +16,7 @@ export interface Transaction {
 
 interface TransactionContextType {
   transactions: Transaction[];
+  allTransactions: Transaction[];
   addTransaction: (type: 'income' | 'expense', amount: number, description: string) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
   totalIncome: number;
@@ -33,6 +34,7 @@ const getCurrentMonthKey = (): string => {
 export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -52,26 +54,32 @@ export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ childre
     const unsubscribe = onValue(transactionsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        const transactionList: Transaction[] = [];
+        const allTransactionList: Transaction[] = [];
+        const monthlyTransactionList: Transaction[] = [];
         Object.keys(data).forEach((key) => {
           const transaction = data[key];
-          // Filter by monthKey in memory since Firebase doesn't support compound queries
+          const tx: Transaction = {
+            id: key,
+            type: transaction.type,
+            amount: transaction.amount,
+            description: transaction.description,
+            timestamp: transaction.timestamp,
+            monthKey: transaction.monthKey,
+            userId: transaction.userId,
+          };
+          allTransactionList.push(tx);
+          // Filter by monthKey for monthly view
           if (transaction.monthKey === currentMonth) {
-            transactionList.push({
-              id: key,
-              type: transaction.type,
-              amount: transaction.amount,
-              description: transaction.description,
-              timestamp: transaction.timestamp,
-              monthKey: transaction.monthKey,
-              userId: transaction.userId,
-            });
+            monthlyTransactionList.push(tx);
           }
         });
         // Sort by timestamp descending (newest first)
-        transactionList.sort((a, b) => b.timestamp - a.timestamp);
-        setTransactions(transactionList);
+        allTransactionList.sort((a, b) => b.timestamp - a.timestamp);
+        monthlyTransactionList.sort((a, b) => b.timestamp - a.timestamp);
+        setAllTransactions(allTransactionList);
+        setTransactions(monthlyTransactionList);
       } else {
+        setAllTransactions([]);
         setTransactions([]);
       }
       setIsLoading(false);
@@ -129,6 +137,7 @@ export const TransactionProvider: React.FC<{ children: ReactNode }> = ({ childre
     <TransactionContext.Provider
       value={{
         transactions,
+        allTransactions,
         addTransaction,
         deleteTransaction,
         totalIncome,
