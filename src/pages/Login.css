@@ -11,9 +11,10 @@
   margin-bottom: 20px;
 }
 
-.google-icon {
-  font-size: 80px;
-  color: #4285f4;
+.app-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
 }
 
 .login-title {

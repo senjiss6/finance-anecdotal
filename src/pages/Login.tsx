@@ -11,6 +11,7 @@ import {
   IonSpinner,
 } from '@ionic/react';
 import { logoGoogle } from 'ionicons/icons';
+import logoNero from '../assets/nero-logo.webp'
 import { IonIcon } from '@ionic/react';
 import { useAuth } from '../context/auth';
 import { useHistory } from 'react-router-dom';
@@ -44,10 +45,10 @@ const Login: React.FC = () => {
       <IonContent className="ion-padding">
         <div className="login-container">
           <div className="login-logo">
-            <IonIcon icon={logoGoogle} className="google-icon" />
+            <img src={logoNero} alt="Nero Logo" className="app-logo" />
           </div>
-          <h1 className="login-title">Finance Tracker</h1>
-          <p className="login-subtitle">Track your income and expenses easily</p>
+          <h1 className="login-title">Nero</h1>
+          <p className="login-subtitle">Nyatet Rupiah Online</p>
 
           <IonCard className="login-card">
             <IonCardContent>
