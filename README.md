@@ -1,6 +1,7 @@
 # Finance Anecdotal
 This app is for log your income and outcome about your self,
 This app will store your data to Firebase database so it will had a real time update to your data and app login using your google mail account.
+
 demo-app: nero.senjilabs.my.id
 
 # App Installation
